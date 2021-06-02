@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Cryptocurrency Demo {% endblock %}</h1>
+    <!-- <button name="forwardBtn" href="/wallet">Create Wallet</button> -->
+    <a href='/newwallet' class="btn btn-warning">Create New Wallet and Reset Blockchain</a>
+    <!-- <input type="submit" name="submit_button" value="Create Ndew Wallet"> </br></br>
+    <input type="submit" name="submit_button" value="Load Existing Wallet"> -->
+    
+    {% if response %}
+    <script>
+        function clip_text(a_string){
+            var input = document.createElement('input')
+            input.id="__copyText__";
+            input.value = a_string;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand("copy");
+            var txt = input.value
+            input.remove()
+            console.log("OK COPIED: '"+txt+"'")
+        }
+        function clip_div(divId){
+           return clip_text(document.getElementById(divId).innerText)
+        }
+    </script>
+        Wallet Created! <br><br>
+        Public Key: <br> <div id="pubkey">{{ response.public_key }}</div>
+        
+    
+    <a href="#" onClick = "clip_div('pubkey')">Copy Public Key</a>
+
+    <br><br>
+    Private Key: <br> <div id="privkey">{{ response.private_key }}</div>
+    <a href="#" onClick = "clip_div('privkey')">Copy Private Key</a>
+    <br><br>
+    Balance: <br> {{ response.balance }}
+
+    <br><br>
+
+    {% endif %}
+
+  <br>
+    <form action="/transaction" method="post">
+        <label for="recipient">Recipient:</label><br>
+        <input type="text" id="recipient" name="recipient"><br>
+        <label for="amount">Amount:</label><br>
+        <input type="text" id="amount" name="amount"><br><br>
+        <input type="submit" value="Send!">
+      </form>
+
+   <br><br><br>
+   <form action="/transactions" method="get">
+    <button type="submit" name="Show open transactions" value="Show open transactions" class="btn-link">Show Open Transactions</button>
+</form>
+      Open Transactions:
+      <ul>
+        {% for tx in response.transactions %}
+          </li> Sender: {{ tx.sender }} </li> <br>
+          </li> Recipient: {{ tx.recipient }} </li> <br>
+          </li> Amount: {{ tx.amount }} </li> <br><br><br>
+        {% endfor %}
+    </ul>
+
+    <form action="/mine" method="post">
+        <button type="submit" name="Mine new block" value="Mine new block" class="btn-link">Mine new block</button>
+    </form>
+    <br><br>
+    <ul>
+        {% for block in response.chain %}
+          </li> Block {{ block.index }}</li> <br>
+        </li> Previous Hash: {{ block.previous_hash }}</li> <br>
+        </li> Transactions: <br>{{ block.transactions }}</li> <br>
+        </li> Proof: {{ block.proof }}</li> <br><br>
+        {% endfor %}
+    </ul>
+    <br>
+    
+{% endblock %}
