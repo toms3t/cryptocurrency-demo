@@ -13,12 +13,16 @@ class Wallet:
         self.private_key = None
         self.public_key = None
         self.node_id = node_id
+        self.trunc_public_key = None
+        self.trunc_private_key = None
 
     def create_keys(self):
         """Create a new pair of private and public keys."""
         private_key, public_key = self.generate_keys()
         self.private_key = private_key
         self.public_key = public_key
+        self.trunc_public_key = self.public_key[:20] + '......' + self.public_key[-20:]
+        self.trunc_private_key = self.private_key[:20] + '......' + self.private_key[-20:]
 
     def save_keys(self):
         """Saves the keys to a file (wallet.txt)."""

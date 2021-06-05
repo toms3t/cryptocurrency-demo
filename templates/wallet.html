@@ -24,15 +24,17 @@
            return clip_text(document.getElementById(divId).innerText)
         }
     </script>
-        Wallet Created! <br><br>
-        Public Key: <br> <div id="pubkey">{{ response.public_key }}</div>
+        &nbsp &nbsp Wallet Created! <br><br><br>
+        Public Key: <br> {{ response.trunc_pub }} (Truncated)
+        <div id="pubkey" style="display:none;">{{ response.public_key }}</div><br>
         
     
-    <a href="#" onClick = "clip_div('pubkey')">Copy Public Key</a>
+    <a href="#" onClick = "clip_div('pubkey')">Copy Entire Public Key</a>
 
     <br><br>
-    Private Key: <br> <div id="privkey">{{ response.private_key }}</div>
-    <a href="#" onClick = "clip_div('privkey')">Copy Private Key</a>
+    Private Key: <br> {{ response.trunc_priv }} (Truncated)
+    <br> <div id="privkey" style="display:none;">{{ response.private_key }}</div>
+    <a href="#" onClick = "clip_div('privkey')">Copy Entire Private Key</a>
     <br><br>
     Balance: <br> {{ response.balance }}
 
@@ -51,16 +53,18 @@
 
    <br><br><br>
    <form action="/transactions" method="get">
-    <button type="submit" name="Show open transactions" value="Show open transactions" class="btn-link">Show Open Transactions</button>
+    <button type="submit" name="Show open transactions" value="Show open transactions" class="btn-link">Show Open Transactions</button><br><br>
 </form>
-      Open Transactions:
-      <ul>
+
+  {% if response.transactions %}
+  <ul>
         {% for tx in response.transactions %}
           </li> Sender: {{ tx.sender }} </li> <br>
           </li> Recipient: {{ tx.recipient }} </li> <br>
           </li> Amount: {{ tx.amount }} </li> <br><br><br>
-        {% endfor %}
+        {% endfor %}  
     </ul>
+    {% endif %}
 
     <form action="/mine" method="post">
         <button type="submit" name="Mine new block" value="Mine new block" class="btn-link">Mine new block</button>

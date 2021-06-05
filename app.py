@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, redirect, send_from_directory, render_template
 from flask_cors import CORS
-import json
 from wallet import Wallet
 from blockchain import Blockchain
 
@@ -27,6 +26,8 @@ def create_keys():
         response = {
             'public_key': wallet.public_key,
             'private_key': wallet.private_key,
+            'trunc_pub': wallet.trunc_public_key,
+            'trunc_priv': wallet.trunc_private_key,
             'balance': blockchain.get_balance(),
             'chain': blockchain.chain
         }
@@ -172,6 +173,8 @@ def add_transaction():
             },
             'public_key': wallet.public_key,
             'private_key': wallet.private_key,
+            'trunc_pub': wallet.trunc_public_key,
+            'trunc_priv': wallet.trunc_private_key,
             'balance': blockchain.get_balance(),
             'chain': blockchain.chain,
             'funds': blockchain.get_balance()
@@ -208,6 +211,8 @@ def mine():
             'message': 'Block added successfully.',
             'public_key': wallet.public_key,
             'private_key': wallet.private_key,
+            'trunc_pub': wallet.trunc_public_key,
+            'trunc_priv': wallet.trunc_private_key,
             'block': dict_block,
             'balance': blockchain.get_balance(),
             'previous_hash': dict_block['previous_hash'],
@@ -237,12 +242,26 @@ def resolve_conflicts():
 def get_open_transaction():
     transactions = blockchain.get_open_transactions()
     dict_transactions = [tx.__dict__ for tx in transactions]
-    print(dict_transactions)
+    if not dict_transactions:
+        response = {
+            'message': 'No open transactions',
+            'transactions': False,
+            'public_key': wallet.public_key,
+            'private_key': wallet.private_key,
+            'trunc_pub': wallet.trunc_public_key,
+            'trunc_priv': wallet.trunc_private_key,
+            'balance': blockchain.get_balance(),
+            'chain': blockchain.chain
+        }
+        return render_template('wallet.html', response=response)
     response = {
         'transactions': dict_transactions,
         'public_key': wallet.public_key,
         'private_key': wallet.private_key,
-        'balance': blockchain.get_balance()
+        'trunc_pub': wallet.trunc_public_key,
+        'trunc_priv': wallet.trunc_private_key,
+        'balance': blockchain.get_balance(),
+        'chain': blockchain.chain
     }
     return render_template('wallet.html', response=response)
     # return jsonify(dict_transactions), 200
